@@ -126,7 +126,6 @@ export const REVENUE_STREAMS = {
 export const COST_STRUCTURE = {
   technology: {
     serverAndHosting: 15000, // monthly
-    smsServiceCosts: 0.08, // per SMS
     storageAndCDN: 5000, // monthly
     thirdPartyAPIs: 8000, // monthly
     securityAndCompliance: 12000 // monthly
