@@ -27,11 +27,6 @@ This app includes a real-time translation feature for posts. The translation ser
 
 There are several ways of editing your application.
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/ebb29cfc-49d5-41c7-bb65-377f147935df) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
