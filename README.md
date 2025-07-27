@@ -1,8 +1,4 @@
-# Welcome to your Lovable project
 
-## Project info
-
-**URL**: https://lovable.dev/projects/ebb29cfc-49d5-41c7-bb65-377f147935df
 
 ## Translation API Configuration
 
