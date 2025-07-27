@@ -9,6 +9,7 @@ import { translations, Language, t } from "@/utils/translations";
 import { getCurrentLocation } from "@/utils/location";
 import { sendOTP, verifyOTP, resendOTP } from "@/utils/smsService";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 interface AuthLoginProps {
   onLogin: (preferences: UserPreferences) => void;
@@ -28,6 +29,8 @@ export const AuthLogin = ({ onLogin }: AuthLoginProps) => {
   const [resendCount, setResendCount] = useState(0);
   const [resendTimer, setResendTimer] = useState(0);
   const { toast } = useToast();
+  const [showOtpDialog, setShowOtpDialog] = useState(false);
+  const [devOtp, setDevOtp] = useState<string | null>(null);
 
   const handleLanguageSelect = (selectedLanguage: Language) => {
     setLanguage(selectedLanguage);
@@ -94,9 +97,9 @@ export const AuthLogin = ({ onLogin }: AuthLoginProps) => {
         });
         setStep('otp');
         startResendTimer();
-        // In development, show the OTP in console
         if (result.otp) {
-          console.log(`Development OTP for ${phone}: ${result.otp}`);
+          setDevOtp(result.otp);
+          setShowOtpDialog(true);
         }
       } else {
         toast({
@@ -223,222 +226,235 @@ export const AuthLogin = ({ onLogin }: AuthLoginProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center pb-8">
-          <div className="mx-auto w-20 h-20 bg-primary rounded-full flex items-center justify-center mb-4">
-            <span className="text-2xl">🛒</span>
-          </div>
-          <h1 className="text-2xl font-bold text-foreground">{t('appName', language)}</h1>
-          <p className="text-muted-foreground text-sm">
-            {getStepTitle()}
-          </p>
-        </CardHeader>
-        
-        <CardContent className="space-y-6">
-          {step === 'language' && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-3">
-                {Object.entries(translations).map(([lang, trans]) => (
-                  <Button
-                    key={lang}
-                    variant="outline"
-                    onClick={() => handleLanguageSelect(lang as Language)}
-                    className="h-14 text-lg flex items-center justify-between"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <Globe className="h-5 w-5" />
-                      <span>{trans.appName}</span>
-                    </div>
-                    <span className="text-sm text-muted-foreground">
-                      {lang === 'en' ? 'English' : 
-                       lang === 'hi' ? 'हिंदी' :
-                       lang === 'bn' ? 'বাংলা' : 'தமிழ்'}
-                    </span>
-                  </Button>
-                ))}
-              </div>
+    <>
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center pb-8">
+            <div className="mx-auto w-20 h-20 bg-primary rounded-full flex items-center justify-center mb-4">
+              <span className="text-2xl">🛒</span>
             </div>
-          )}
-
-          {step === 'location' && (
-            <div className="space-y-4">
-              <div className="text-center space-y-2">
-                <MapPin className="mx-auto h-12 w-12 text-primary" />
-                <p className="text-sm text-muted-foreground">
-                  {t('allowLocation', language)}
-                </p>
-              </div>
-              
-              <Button 
-                onClick={handleLocationPermission}
-                className="w-full h-12 text-lg"
-                disabled={isLoadingLocation}
-              >
-                <MapPin className="mr-2 h-5 w-5" />
-                {isLoadingLocation ? 'Getting Location...' : t('allowLocation', language)}
-              </Button>
-            </div>
-          )}
-
-          {step === 'name' && (
-            <>
+            <h1 className="text-2xl font-bold text-foreground">{t('appName', language)}</h1>
+            <p className="text-muted-foreground text-sm">
+              {getStepTitle()}
+            </p>
+          </CardHeader>
+          
+          <CardContent className="space-y-6">
+            {step === 'language' && (
               <div className="space-y-4">
-                {location && (
-                  <div className="bg-muted p-3 rounded-lg">
-                    <div className="flex items-center space-x-2 text-sm">
-                      <MapPin className="h-4 w-4 text-primary" />
-                      <span>{location.area}, {location.city}</span>
-                    </div>
-                  </div>
-                )}
-                
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    type="text"
-                    placeholder="Enter your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="pl-10 h-12 text-lg"
-                  />
+                <div className="grid grid-cols-1 gap-3">
+                  {Object.entries(translations).map(([lang, trans]) => (
+                    <Button
+                      key={lang}
+                      variant="outline"
+                      onClick={() => handleLanguageSelect(lang as Language)}
+                      className="h-14 text-lg flex items-center justify-between"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <Globe className="h-5 w-5" />
+                        <span>{trans.appName}</span>
+                      </div>
+                      <span className="text-sm text-muted-foreground">
+                        {lang === 'en' ? 'English' : 
+                         lang === 'hi' ? 'हिंदी' :
+                         lang === 'bn' ? 'বাংলা' : 'தமிழ்'}
+                      </span>
+                    </Button>
+                  ))}
                 </div>
               </div>
-              
-              <Button 
-                onClick={handleNameSubmit}
-                className="w-full h-12 text-lg"
-                disabled={!name.trim()}
-              >
-                Continue
-              </Button>
-              
-              <Button 
-                variant="outline"
-                onClick={() => setStep('location')}
-                className="w-full"
-              >
-                {t('location', language)}
-              </Button>
-            </>
-          )}
+            )}
 
-          {step === 'phone' && (
-            <>
+            {step === 'location' && (
               <div className="space-y-4">
-                {location && (
-                  <div className="bg-muted p-3 rounded-lg">
-                    <div className="flex items-center space-x-2 text-sm">
-                      <MapPin className="h-4 w-4 text-primary" />
-                      <span>{location.area}, {location.city}</span>
-                    </div>
-                  </div>
-                )}
-                
-                <div className="bg-muted p-3 rounded-lg">
-                  <div className="flex items-center space-x-2 text-sm">
-                    <User className="h-4 w-4 text-primary" />
-                    <span>{name}</span>
-                  </div>
-                </div>
-                
-                <div className="relative">
-                  <Smartphone className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    type="tel"
-                    placeholder={t('enterMobile', language)}
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    className="pl-10 h-12 text-lg"
-                    maxLength={10}
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  We'll send a verification code via SMS to verify your phone number.
-                </p>
-              </div>
-              
-              <Button 
-                onClick={handleSendOTP}
-                className="w-full h-12 text-lg"
-                disabled={phone.length < 10 || isSendingOTP}
-              >
-                {isSendingOTP ? 'Sending...' : t('sendOTP', language)}
-              </Button>
-              
-              <Button 
-                variant="outline"
-                onClick={() => setStep('name')}
-                className="w-full"
-              >
-                Name
-              </Button>
-            </>
-          )}
-
-          {step === 'otp' && (
-            <>
-              <div className="space-y-4">
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Code sent to +91 {phone}
+                <div className="text-center space-y-2">
+                  <MapPin className="mx-auto h-12 w-12 text-primary" />
+                  <p className="text-sm text-muted-foreground">
+                    {t('allowLocation', language)}
                   </p>
                 </div>
                 
-                <Input
-                  type="text"
-                  placeholder="Enter 4-digit code"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  className="text-center text-2xl tracking-widest h-12"
-                  maxLength={4}
-                />
-
-                <div className="text-center">
-                  <Button
-                    variant="link"
-                    onClick={handleResendOTP}
-                    disabled={resendTimer > 0 || isResendingOTP || resendCount >= 3}
-                    className="text-sm"
-                  >
-                    {isResendingOTP ? (
-                      <><RefreshCw className="mr-1 h-3 w-3 animate-spin" /> Resending...</>
-                    ) : resendTimer > 0 ? (
-                      `Resend in ${resendTimer}s`
-                    ) : resendCount >= 3 ? (
-                      'Max attempts reached'
-                    ) : (
-                      'Resend OTP'
-                    )}
-                  </Button>
-                  {resendCount > 0 && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Attempts: {resendCount}/3
-                    </p>
-                  )}
-                </div>
+                <Button 
+                  onClick={handleLocationPermission}
+                  className="w-full h-12 text-lg"
+                  disabled={isLoadingLocation}
+                >
+                  <MapPin className="mr-2 h-5 w-5" />
+                  {isLoadingLocation ? 'Getting Location...' : t('allowLocation', language)}
+                </Button>
               </div>
-              
-              <Button 
-                onClick={handleVerifyOTP}
-                className="w-full h-12 text-lg"
-                disabled={otp.length < 4 || isVerifyingOTP}
-              >
-                <CheckCircle className="mr-2 h-5 w-5" />
-                {isVerifyingOTP ? 'Verifying...' : t('verify', language)}
-              </Button>
-              
-              <Button 
-                variant="outline"
-                onClick={() => setStep('phone')}
-                className="w-full"
-              >
-                {t('changeNumber', language)}
-              </Button>
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+            )}
+
+            {step === 'name' && (
+              <>
+                <div className="space-y-4">
+                  {location && (
+                    <div className="bg-muted p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 text-sm">
+                        <MapPin className="h-4 w-4 text-primary" />
+                        <span>{location.area}, {location.city}</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      placeholder="Enter your name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="pl-10 h-12 text-lg"
+                    />
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={handleNameSubmit}
+                  className="w-full h-12 text-lg"
+                  disabled={!name.trim()}
+                >
+                  Continue
+                </Button>
+                
+                <Button 
+                  variant="outline"
+                  onClick={() => setStep('location')}
+                  className="w-full"
+                >
+                  {t('location', language)}
+                </Button>
+              </>
+            )}
+
+            {step === 'phone' && (
+              <>
+                <div className="space-y-4">
+                  {location && (
+                    <div className="bg-muted p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 text-sm">
+                        <MapPin className="h-4 w-4 text-primary" />
+                        <span>{location.area}, {location.city}</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="bg-muted p-3 rounded-lg">
+                    <div className="flex items-center space-x-2 text-sm">
+                      <User className="h-4 w-4 text-primary" />
+                      <span>{name}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="relative">
+                    <Smartphone className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                    <Input
+                      type="tel"
+                      placeholder={t('enterMobile', language)}
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      className="pl-10 h-12 text-lg"
+                      maxLength={10}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    We'll send a verification code via SMS to verify your phone number.
+                  </p>
+                </div>
+                
+                <Button 
+                  onClick={handleSendOTP}
+                  className="w-full h-12 text-lg"
+                  disabled={phone.length < 10 || isSendingOTP}
+                >
+                  {isSendingOTP ? 'Sending...' : t('sendOTP', language)}
+                </Button>
+                
+                <Button 
+                  variant="outline"
+                  onClick={() => setStep('name')}
+                  className="w-full"
+                >
+                  Name
+                </Button>
+              </>
+            )}
+
+            {step === 'otp' && (
+              <>
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Code sent to +91 {phone}
+                    </p>
+                  </div>
+                  
+                  <Input
+                    type="text"
+                    placeholder="Enter 4-digit code"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    className="text-center text-2xl tracking-widest h-12"
+                    maxLength={4}
+                  />
+
+                  <div className="text-center">
+                    <Button
+                      variant="link"
+                      onClick={handleResendOTP}
+                      disabled={resendTimer > 0 || isResendingOTP || resendCount >= 3}
+                      className="text-sm"
+                    >
+                      {isResendingOTP ? (
+                        <><RefreshCw className="mr-1 h-3 w-3 animate-spin" /> Resending...</>
+                      ) : resendTimer > 0 ? (
+                        `Resend in ${resendTimer}s`
+                      ) : resendCount >= 3 ? (
+                        'Max attempts reached'
+                      ) : (
+                        'Resend OTP'
+                      )}
+                    </Button>
+                    {resendCount > 0 && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Attempts: {resendCount}/3
+                      </p>
+                    )}
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={handleVerifyOTP}
+                  className="w-full h-12 text-lg"
+                  disabled={otp.length < 4 || isVerifyingOTP}
+                >
+                  <CheckCircle className="mr-2 h-5 w-5" />
+                  {isVerifyingOTP ? 'Verifying...' : t('verify', language)}
+                </Button>
+                
+                <Button 
+                  variant="outline"
+                  onClick={() => setStep('phone')}
+                  className="w-full"
+                >
+                  {t('changeNumber', language)}
+                </Button>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+      <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Development OTP</DialogTitle>
+            <DialogDescription>
+              Use this OTP to verify your phone number. This popup is shown for development/demo purposes only.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="text-center text-3xl font-bold py-4">{devOtp}</div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
