@@ -229,6 +229,16 @@ const Index = () => {
     }
   ]);
 
+  // Add useEffect to handle initial loading
+  useEffect(() => {
+    // Set a shorter, more reliable loading timeout
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // 2 seconds instead of relying on the LoadingScreen
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleLoadingComplete = () => {
     setIsLoading(false);
   };
