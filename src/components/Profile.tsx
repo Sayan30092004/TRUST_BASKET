@@ -7,10 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { User, Star, ShoppingBag, MessageSquare, ThumbsUp, Eye, EyeOff } from "lucide-react";
+import { User, Star, ShoppingBag, MessageSquare, ThumbsUp, Eye, EyeOff, Shield, Crown, FileText, TrendingUp } from "lucide-react";
 import { UserPreferences, Supplier } from "@/types";
 import { Language } from "@/utils/translations";
 import { t } from "@/utils/translations";
+import { TrustedMemberVerification } from "./TrustedMemberVerification";
+import { BusinessModelOverview } from "./BusinessModelOverview";
 
 interface ProfileProps {
   userPreferences: UserPreferences;
@@ -48,6 +50,8 @@ export const Profile = ({
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMyPostsOpen, setIsMyPostsOpen] = useState(false);
   const [isVotingHistoryOpen, setIsVotingHistoryOpen] = useState(false);
+  const [showTrustedVerification, setShowTrustedVerification] = useState(false);
+  const [showBusinessModel, setShowBusinessModel] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   
   // Settings state
@@ -223,6 +227,95 @@ export const Profile = ({
           </Button>
         </CardContent>
       </Card>
+
+      {/* Membership Upgrade */}
+      {userPreferences.userType === 'regular' && (
+        <Card className="mb-6 border-blue-200 bg-blue-50/50">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2 text-blue-900">
+              <Crown className="h-5 w-5" />
+              <span>Upgrade Your Account</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-blue-800">
+              Become a Trusted or Verified member to unlock premium features and build credibility.
+            </p>
+            <div className="flex space-x-2">
+              <Button 
+                onClick={() => setShowTrustedVerification(true)}
+                className="flex-1 bg-blue-600 hover:bg-blue-700"
+              >
+                <Shield className="h-4 w-4 mr-2" />
+                Become Trusted
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => setShowBusinessModel(true)}
+                className="border-blue-200 text-blue-700 hover:bg-blue-50"
+              >
+                <TrendingUp className="h-4 w-4 mr-2" />
+                View Plans
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Verification Status */}
+      {(userPreferences.userType === 'trusted' || userPreferences.userType === 'verified') && (
+        <Card className="mb-6 border-green-200 bg-green-50/50">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2 text-green-900">
+              {userPreferences.userType === 'trusted' ? 
+                <Shield className="h-5 w-5" /> : 
+                <Crown className="h-5 w-5" />
+              }
+              <span>{userPreferences.userType === 'trusted' ? 'Trusted' : 'Verified'} Member</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-green-800">Verification Status</span>
+              <Badge className="bg-green-100 text-green-800">
+                {userPreferences.userType === 'verified' ? '✅ Government Verified' : '🛡️ Trusted Member'}
+              </Badge>
+            </div>
+            {userPreferences.businessDocuments && userPreferences.businessDocuments.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-green-900">Uploaded Documents</p>
+                {userPreferences.businessDocuments.slice(0, 2).map((doc) => (
+                  <div key={doc.id} className="flex items-center justify-between text-sm">
+                    <span className="text-green-700">{doc.fileName}</span>
+                    <Badge variant={doc.status === 'approved' ? 'default' : doc.status === 'rejected' ? 'destructive' : 'secondary'}>
+                      {doc.status}
+                    </Badge>
+                  </div>
+                ))}
+                {userPreferences.businessDocuments.length > 2 && (
+                  <Button 
+                    variant="link" 
+                    size="sm" 
+                    onClick={() => setShowTrustedVerification(true)}
+                    className="text-green-700 p-0 h-auto"
+                  >
+                    View all {userPreferences.businessDocuments.length} documents
+                  </Button>
+                )}
+              </div>
+            )}
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setShowTrustedVerification(true)}
+              className="w-full border-green-200 text-green-700 hover:bg-green-50"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              Manage Verification
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Quick actions */}
       <Card>
@@ -412,6 +505,30 @@ export const Profile = ({
           </Button>
         </CardContent>
       </Card>
+
+      {/* Trusted Member Verification Modal */}
+      {showTrustedVerification && (
+        <TrustedMemberVerification
+          user={userPreferences}
+          onUpdateUser={onUpdatePreferences}
+          onClose={() => setShowTrustedVerification(false)}
+        />
+      )}
+
+      {/* Business Model Overview Modal */}
+      {showBusinessModel && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background rounded-lg max-w-7xl max-h-[90vh] overflow-y-auto">
+            <div className="p-4 border-b flex items-center justify-between">
+              <h2 className="text-xl font-semibold">TRUST_BASKET Business Model</h2>
+              <Button variant="ghost" size="sm" onClick={() => setShowBusinessModel(false)}>
+                ✕
+              </Button>
+            </div>
+            <BusinessModelOverview />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

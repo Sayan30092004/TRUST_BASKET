@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, MapPin, Star, TrendingUp, Shield, Bot, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Search, MapPin, Star, TrendingUp, Shield, Bot, ThumbsUp, ThumbsDown, Crown } from "lucide-react";
 import { UserPreferences, Supplier } from "@/types";
 import { t } from "@/utils/translations";
 import { calculateDistance } from "@/utils/location";
@@ -158,7 +158,17 @@ export const SupplierList = ({
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-1">
                           <h3 className="font-semibold text-foreground">{supplier.name}</h3>
-                          {supplier.isVerified ? (
+                          {supplier.userType === 'verified' ? (
+                            <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 border-green-200">
+                              <Crown className="h-3 w-3 mr-1" />
+                              Government Verified
+                            </Badge>
+                          ) : supplier.userType === 'trusted' ? (
+                            <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 border-blue-200">
+                              <Shield className="h-3 w-3 mr-1" />
+                              Trusted Member
+                            </Badge>
+                          ) : supplier.isVerified ? (
                             <Badge variant="secondary" className="text-xs">
                               <Shield className="h-3 w-3 mr-1" />
                               Verified

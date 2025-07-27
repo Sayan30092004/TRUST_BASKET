@@ -90,7 +90,8 @@ export const CreatePost = ({ userPreferences, onCreatePost }: CreatePostProps) =
     const newPost = {
       content: content.trim(),
       category,
-      supplierName: extractedSupplier || undefined
+      supplierName: extractedSupplier || undefined,
+      authorUserType: userPreferences.userType || 'regular'
     };
     
     // Call the parent callback

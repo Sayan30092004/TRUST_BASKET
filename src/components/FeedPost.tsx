@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, ThumbsDown, MessageCircle, MapPin, Languages, RotateCcw } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ThumbsUp, ThumbsDown, MessageCircle, MapPin, Languages, RotateCcw, Shield, Crown } from "lucide-react";
 import { Post } from "@/types";
 import { Language, t } from "@/utils/translations";
 import { translatePost, isTranslationAvailable, getLanguageName } from "@/utils/postTranslation";
@@ -81,7 +82,21 @@ export const FeedPost = ({ post, onVote, language, userVote }: FeedPostProps) =>
           <div className="flex items-center space-x-2">
             <span className="text-2xl">{getCategoryEmoji(post.category)}</span>
             <div>
-              <p className="font-semibold text-foreground">{post.authorName}</p>
+              <div className="flex items-center space-x-2">
+                <p className="font-semibold text-foreground">{post.authorName}</p>
+                {post.authorUserType === 'trusted' && (
+                  <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800 border-blue-200">
+                    <Shield className="h-3 w-3 mr-1" />
+                    Trusted
+                  </Badge>
+                )}
+                {post.authorUserType === 'verified' && (
+                  <Badge variant="secondary" className="text-xs bg-green-100 text-green-800 border-green-200">
+                    <Crown className="h-3 w-3 mr-1" />
+                    Verified
+                  </Badge>
+                )}
+              </div>
               <div className="flex items-center space-x-2 text-xs text-muted-foreground">
                 <span className="capitalize">{post.category}</span>
                 {post.distance !== undefined && (
