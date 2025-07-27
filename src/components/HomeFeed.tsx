@@ -9,9 +9,10 @@ interface HomeFeedProps {
   userPreferences: UserPreferences;
   posts: PostType[];
   onVote: (postId: string, type: 'up' | 'down') => void;
+  getUserVote: (postId: string) => 'up' | 'down' | null;
 }
 
-export const HomeFeed = ({ userPreferences, posts, onVote }: HomeFeedProps) => {
+export const HomeFeed = ({ userPreferences, posts, onVote, getUserVote }: HomeFeedProps) => {
   // Calculate distances and sort by proximity
   const postsWithDistance = useMemo(() => {
     return posts.map(post => ({
@@ -40,6 +41,7 @@ export const HomeFeed = ({ userPreferences, posts, onVote }: HomeFeedProps) => {
             post={post} 
             onVote={onVote}
             language={userPreferences.language}
+            userVote={getUserVote(post.id)}
           />
         ))}
       </div>

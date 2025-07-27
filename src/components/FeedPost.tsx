@@ -10,10 +10,10 @@ interface FeedPostProps {
   post: Post & { distance?: number };
   onVote: (postId: string, type: 'up' | 'down') => void;
   language: Language;
+  userVote: 'up' | 'down' | null;
 }
 
-export const FeedPost = ({ post, onVote, language }: FeedPostProps) => {
-  const [userVote, setUserVote] = useState<'up' | 'down' | null>(null);
+export const FeedPost = ({ post, onVote, language, userVote }: FeedPostProps) => {
   const [translatedContent, setTranslatedContent] = useState<string>('');
   const [isTranslated, setIsTranslated] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
@@ -50,7 +50,6 @@ export const FeedPost = ({ post, onVote, language }: FeedPostProps) => {
   };
 
   const handleVote = (type: 'up' | 'down') => {
-    setUserVote(userVote === type ? null : type);
     onVote(post.id, type);
   };
 

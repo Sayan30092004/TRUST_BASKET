@@ -7,8 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { User, Star, ShoppingBag, MessageSquare, ThumbsUp, Settings, LogOut, Edit, Eye, EyeOff } from "lucide-react";
-import { UserPreferences } from "@/types";
+import { User, Star, ShoppingBag, MessageSquare, ThumbsUp, Eye, EyeOff } from "lucide-react";
+import { UserPreferences, Supplier } from "@/types";
 import { Language } from "@/utils/translations";
 import { t } from "@/utils/translations";
 
@@ -16,9 +16,35 @@ interface ProfileProps {
   userPreferences: UserPreferences;
   onLogout: () => void;
   onUpdatePreferences: (preferences: UserPreferences) => void;
+  votingHistory: Array<{
+    id: string;
+    action: string;
+    post: string;
+    timestamp: string;
+    category: string;
+  }>;
+  userPosts: Array<{
+    id: string;
+    content: string;
+    category: string;
+    likes: number;
+    dislikes: number;
+    timestamp: string;
+    supplierName?: string;
+  }>;
+  suppliers: Supplier[];
+  getUserSupplierVote: (supplierId: string) => 'up' | 'down' | null;
 }
 
-export const Profile = ({ userPreferences, onLogout, onUpdatePreferences }: ProfileProps) => {
+export const Profile = ({ 
+  userPreferences, 
+  onLogout, 
+  onUpdatePreferences, 
+  votingHistory, 
+  userPosts,
+  suppliers,
+  getUserSupplierVote
+}: ProfileProps) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMyPostsOpen, setIsMyPostsOpen] = useState(false);
   const [isVotingHistoryOpen, setIsVotingHistoryOpen] = useState(false);
@@ -42,29 +68,44 @@ export const Profile = ({ userPreferences, onLogout, onUpdatePreferences }: Prof
   };
 
   const stats = {
-    postsShared: 12,
-    helpfulVotes: 45,
+    postsShared: userPosts.length, // Use actual user posts count
+    helpfulVotes: votingHistory.length, // Use actual voting history length
     trustedSuppliers: 8,
     commentsPosted: 23
   };
 
-  const trustedSuppliers = [
-    { name: "Green Valley Farms", category: "vegetables", emoji: "🥬", score: 92 },
-    { name: "City Distributors", category: "oil", emoji: "🛢️", score: 88 },
-    { name: "EcoWrap", category: "packaging", emoji: "📦", score: 95 },
-  ];
+  // Get user's trusted suppliers (only those they've voted up)
+  const getTrustedSuppliers = () => {
+    return suppliers
+      .filter(supplier => getUserSupplierVote(supplier.id) === 'up')
+      .map(supplier => {
+        const total = supplier.thumbsUp + supplier.thumbsDown;
+        const trustScore = total > 0 ? Math.round((supplier.thumbsUp / total) * 100) : 75;
+        
+        const getCategoryEmoji = (category: string) => {
+          const emojis: Record<string, string> = {
+            vegetables: '🥬',
+            spices: '🌶️',
+            oil: '🛢️',
+            packaging: '📦',
+            meat: '🥩',
+            dairy: '🥛',
+          };
+          return emojis[category.toLowerCase()] || '🏪';
+        };
 
-  const myPosts = [
-    { id: 1, content: "Got fresh tomatoes from Green Valley Farms. Quality was excellent!", category: "vegetables", likes: 12, timestamp: "2h ago" },
-    { id: 2, content: "Spice Palace delivered adulterated turmeric powder. Very disappointed.", category: "spices", likes: 2, timestamp: "1d ago" },
-    { id: 3, content: "Sunflower oil from City Distributors is good quality and reasonably priced.", category: "oil", likes: 15, timestamp: "3d ago" },
-  ];
+        return {
+          name: supplier.name,
+          category: supplier.category,
+          emoji: getCategoryEmoji(supplier.category),
+          score: trustScore,
+          isVerified: supplier.isVerified
+        };
+      })
+      .sort((a, b) => b.score - a.score); // Sort by trust score (highest first)
+  };
 
-  const votingHistory = [
-    { id: 1, action: "👍 Liked", post: "Fresh vegetables from local market", timestamp: "1h ago" },
-    { id: 2, action: "👎 Disliked", post: "Poor quality dairy products", timestamp: "3h ago" },
-    { id: 3, action: "👍 Liked", post: "Excellent packaging supplier", timestamp: "1d ago" },
-  ];
+  const trustedSuppliers = getTrustedSuppliers();
 
   const handleLanguageChange = (newLanguage: Language) => {
     setSettings(prev => ({ ...prev, language: newLanguage }));
@@ -141,25 +182,41 @@ export const Profile = ({ userPreferences, onLogout, onUpdatePreferences }: Prof
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <ShoppingBag className="h-5 w-5" />
-            <span>My Trusted Suppliers</span>
+            <span>My Trusted Suppliers ({trustedSuppliers.length})</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          {trustedSuppliers.map((supplier, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-              <div className="flex items-center space-x-3">
-                <span className="text-xl">{supplier.emoji}</span>
-                <div>
-                  <p className="font-medium text-foreground">{supplier.name}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{supplier.category}</p>
+          {trustedSuppliers.length > 0 ? (
+            trustedSuppliers.map((supplier, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <span className="text-xl">{supplier.emoji}</span>
+                  <div>
+                    <p className="font-medium text-foreground">{supplier.name}</p>
+                    <div className="flex items-center space-x-2">
+                      <p className="text-xs text-muted-foreground capitalize">{supplier.category}</p>
+                      {supplier.isVerified && (
+                        <Badge variant="secondary" className="text-xs">
+                          <Star className="h-3 w-3 mr-1" />
+                          Verified
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-trust-high">{supplier.score}%</p>
+                  <p className="text-xs text-muted-foreground">Trust Score</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-sm font-bold text-trust-high">{supplier.score}%</p>
-                <p className="text-xs text-muted-foreground">Trust Score</p>
-              </div>
+            ))
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <ShoppingBag className="h-12 w-12 mx-auto mb-2 opacity-50" />
+              <p>No trusted suppliers yet</p>
+              <p className="text-xs">Vote up suppliers you trust to see them here</p>
             </div>
-          ))}
+          )}
           
           <Button variant="outline" className="w-full mt-4">
             View All Suppliers
@@ -176,7 +233,7 @@ export const Profile = ({ userPreferences, onLogout, onUpdatePreferences }: Prof
           <Dialog open={isMyPostsOpen} onOpenChange={setIsMyPostsOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" className="w-full justify-start">
-                📝 My Posts & Comments
+                📝 My Posts & Comments ({userPosts.length})
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md">
@@ -184,22 +241,37 @@ export const Profile = ({ userPreferences, onLogout, onUpdatePreferences }: Prof
                 <DialogTitle>My Posts & Comments</DialogTitle>
               </DialogHeader>
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {myPosts.map(post => (
-                  <div key={post.id} className="p-3 border rounded-lg">
-                    <p className="text-sm font-medium">{post.content}</p>
-                    <div className="flex items-center justify-between mt-2">
-                      <Badge variant="secondary" className="text-xs">
-                        {post.category}
-                      </Badge>
-                      <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                        <ThumbsUp className="h-3 w-3" />
-                        <span>{post.likes}</span>
-                        <span>•</span>
-                        <span>{post.timestamp}</span>
+                {userPosts.length > 0 ? (
+                  userPosts.map(post => (
+                    <div key={post.id} className="p-3 border rounded-lg">
+                      <p className="text-sm font-medium">{post.content}</p>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center space-x-2">
+                          <Badge variant="secondary" className="text-xs">
+                            {post.category}
+                          </Badge>
+                          {post.supplierName && (
+                            <Badge variant="outline" className="text-xs">
+                              📍 {post.supplierName}
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                          <ThumbsUp className="h-3 w-3" />
+                          <span>{post.likes}</span>
+                          <span>•</span>
+                          <span>{post.timestamp}</span>
+                        </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <MessageSquare className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                    <p>No posts yet</p>
+                    <p className="text-xs">Start sharing your experiences to see them here</p>
                   </div>
-                ))}
+                )}
               </div>
             </DialogContent>
           </Dialog>
@@ -207,7 +279,7 @@ export const Profile = ({ userPreferences, onLogout, onUpdatePreferences }: Prof
           <Dialog open={isVotingHistoryOpen} onOpenChange={setIsVotingHistoryOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" className="w-full justify-start">
-                📊 My Voting History
+                📊 My Voting History ({votingHistory.length})
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md">
@@ -215,15 +287,26 @@ export const Profile = ({ userPreferences, onLogout, onUpdatePreferences }: Prof
                 <DialogTitle>My Voting History</DialogTitle>
               </DialogHeader>
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {votingHistory.map(vote => (
-                  <div key={vote.id} className="p-3 border rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{vote.action}</span>
-                      <span className="text-xs text-muted-foreground">{vote.timestamp}</span>
+                {votingHistory.length > 0 ? (
+                  votingHistory.map(vote => (
+                    <div key={vote.id} className="p-3 border rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">{vote.action}</span>
+                        <span className="text-xs text-muted-foreground">{vote.timestamp}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">{vote.post}</p>
+                      <Badge variant="outline" className="text-xs mt-1">
+                        {vote.category}
+                      </Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">{vote.post}</p>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <ThumbsUp className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                    <p>No voting history yet</p>
+                    <p className="text-xs">Start voting on posts to see your history here</p>
                   </div>
-                ))}
+                )}
               </div>
             </DialogContent>
           </Dialog>

@@ -38,3 +38,18 @@ export interface Post {
   location: Location;
   distance?: number;
 }
+
+export interface Vote {
+  id: string;
+  postId: string;
+  userId: string; // user's phone number as ID
+  type: 'up' | 'down';
+  timestamp: Date;
+  postContent: string; // for display in voting history
+  postCategory: string;
+}
+
+export interface UserVote {
+  postId: string;
+  type: 'up' | 'down' | null;
+}
