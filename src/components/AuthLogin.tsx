@@ -90,7 +90,8 @@ export const AuthLogin = ({ onLogin }: AuthLoginProps) => {
       if (result.success) {
         toast({
           title: "OTP Sent Successfully",
-          description: `A verification code has been sent to +91 ${phone}`,
+          description: `A verification code has been sent to +91 ${phone}
+          Development OTP for ${phone}: ${result.otp}`,
         });
         setStep('otp');
         startResendTimer();
