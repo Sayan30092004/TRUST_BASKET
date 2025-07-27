@@ -228,40 +228,6 @@ export const Profile = ({
         </CardContent>
       </Card>
 
-      {/* Membership Upgrade */}
-      {userPreferences.userType === 'regular' && (
-        <Card className="mb-6 border-blue-200 bg-blue-50/50">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-blue-900">
-              <Crown className="h-5 w-5" />
-              <span>Upgrade Your Account</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p className="text-sm text-blue-800">
-              Become a Trusted or Verified member to unlock premium features and build credibility.
-            </p>
-            <div className="flex space-x-2">
-              <Button 
-                onClick={() => setShowTrustedVerification(true)}
-                className="flex-1 bg-blue-600 hover:bg-blue-700"
-              >
-                <Shield className="h-4 w-4 mr-2" />
-                Become Trusted
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => setShowBusinessModel(true)}
-                className="border-blue-200 text-blue-700 hover:bg-blue-50"
-              >
-                <TrendingUp className="h-4 w-4 mr-2" />
-                View Plans
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Verification Status */}
       {(userPreferences.userType === 'trusted' || userPreferences.userType === 'verified') && (
         <Card className="mb-6 border-green-200 bg-green-50/50">
