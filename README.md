@@ -93,17 +93,6 @@ npm run dev
 Create a `.env` file with your API keys:
 
 ```env
-# SMS Service Configuration
-VITE_TWILIO_ACCOUNT_SID=your_twilio_sid
-VITE_TWILIO_AUTH_TOKEN=your_twilio_token
-VITE_TWILIO_PHONE_NUMBER=your_twilio_number
-
-# TextLocal (India)
-VITE_TEXTLOCAL_API_KEY=your_textlocal_key
-
-# MSG91 (India)
-VITE_MSG91_AUTH_KEY=your_msg91_key
-
 # Optional: Google Translate API
 VITE_GOOGLE_TRANSLATE_API_KEY=your_google_translate_key
 ```
@@ -171,14 +160,6 @@ src/
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-##
-
-## 📞 Support
-
-- **Documentation**: See [TRUSTED_MEMBER_FEATURES.md](TRUSTED_MEMBER_FEATURES.md)
-- **Issues**: [GitHub Issues](https://github.com/Sayan30092004/TRUST_BASKET/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/Sayan30092004/TRUST_BASKET/discussions)
-
 ## How can I edit this code?
 
 There are several ways of editing your application.
@@ -228,19 +209,5 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/ebb29cfc-49d5-41c7-bb65-377f147935df) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
-
----
 
 **TRUST_BASKET** - Building India's Most Trusted B2B Marketplace 🇮🇳
