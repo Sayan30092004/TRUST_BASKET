@@ -2,20 +2,20 @@ import { OTPVerification } from '@/types';
 
 // In a real application, these would be environment variables
 const TWILIO_CONFIG = {
-  accountSid: process.env.VITE_TWILIO_ACCOUNT_SID || 'your_twilio_account_sid',
-  authToken: process.env.VITE_TWILIO_AUTH_TOKEN || 'your_twilio_auth_token',
-  phoneNumber: process.env.VITE_TWILIO_PHONE_NUMBER || '+1234567890'
+  accountSid: import.meta.env.VITE_TWILIO_ACCOUNT_SID || 'your_twilio_account_sid',
+  authToken: import.meta.env.VITE_TWILIO_AUTH_TOKEN || 'your_twilio_auth_token',
+  phoneNumber: import.meta.env.VITE_TWILIO_PHONE_NUMBER || '+1234567890'
 };
 
 // Alternative SMS providers configuration
 const SMS_PROVIDERS = {
   textlocal: {
-    apiKey: process.env.VITE_TEXTLOCAL_API_KEY || 'your_textlocal_api_key',
-    username: process.env.VITE_TEXTLOCAL_USERNAME || 'your_username'
+    apiKey: import.meta.env.VITE_TEXTLOCAL_API_KEY || 'your_textlocal_api_key',
+    username: import.meta.env.VITE_TEXTLOCAL_USERNAME || 'your_username'
   },
   msg91: {
-    authKey: process.env.VITE_MSG91_AUTH_KEY || 'your_msg91_auth_key',
-    templateId: process.env.VITE_MSG91_TEMPLATE_ID || 'your_template_id'
+    authKey: import.meta.env.VITE_MSG91_AUTH_KEY || 'your_msg91_auth_key',
+    templateId: import.meta.env.VITE_MSG91_TEMPLATE_ID || 'your_template_id'
   }
 };
 
