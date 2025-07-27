@@ -1,17 +1,9 @@
 # TRUST_BASKET 🛒
 
-India's Most Trusted B2B Marketplace - Connecting suppliers and buyers with verified credentials and real-time communication.
+India's Most Trusted B2B Marketplace - Connecting suppliers and buyers with verified credentials.
 
 ## OTP POPUP:
   OTP will be shown via Popup
-
-## 🚀 New Features
-
-### 🛡️ Trusted Member Verification System
-- **Three-tier membership**: Regular (Free), Trusted (₹999/year), Verified (₹1098/year)
-- **Government document verification** for business credentials
-- **Real SMS OTP authentication** with multi-provider support
-- **User badges** for enhanced credibility and trust
 
 ### 📱 Real SMS OTP Verification
 - **Multi-provider SMS service** with fallback support:
@@ -27,11 +19,6 @@ India's Most Trusted B2B Marketplace - Connecting suppliers and buyers with veri
 - **Drag & drop interface** for easy uploading
 - **Admin verification workflow** with status tracking
 
-### 💼 Comprehensive Business Model
-- **Revenue streams**: Membership fees, transaction fees, partnership commissions
-- **Cost structure analysis** and growth projections
-- **Value propositions** for all stakeholders
-- **Financial projections** for sustainable growth
 
 ## 📊 Features
 
@@ -136,29 +123,7 @@ VITE_GOOGLE_TRANSLATE_API_KEY=your_google_translate_key
 3. **Upgrade**: Become a Trusted member by uploading business documents
 4. **Verify**: Get government verification for enhanced credibility
 
-### Membership Tiers
 
-#### 🆓 Regular Member (Free)
-- Basic supplier search and ratings
-- Post basic inquiries
-- Community discussions
-- Location-based search
-
-#### 🛡️ Trusted Member (₹999/year)
-- All Regular features
-- **Trusted Member Badge**
-- Priority search listing
-- Advanced analytics
-- Premium support
-- Bulk inquiries
-
-#### 👑 Verified Member (₹1098/year)
-- All Trusted features
-- **Government Verified Badge**
-- Premium search placement
-- Direct customer contact
-- Business insurance eligibility
-- Export/Import facilitation
 
 ## 🏗️ Architecture
 
@@ -213,25 +178,7 @@ src/
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🎯 Roadmap
-
-### Phase 1 (Current)
-- ✅ Trusted member verification system
-- ✅ Real SMS OTP authentication
-- ✅ Business document upload
-- ✅ Comprehensive business model
-
-### Phase 2 (Planned)
-- 🔄 Payment gateway integration (Razorpay)
-- 🔄 Advanced analytics dashboard
-- 🔄 API integration with government databases
-- 🔄 Automated document verification (AI/OCR)
-
-### Phase 3 (Future)
-- 📋 Business networking features
-- 📋 Export/Import facilitation
-- 📋 Banking partnerships
-- 📋 Insurance integration
+##
 
 ## 📞 Support
 
