@@ -30,14 +30,6 @@ export interface UserPreferences {
   verificationApprovedAt?: Date;
 }
 
-export interface OTPVerification {
-  phone: string;
-  otp: string;
-  expiresAt: Date;
-  attempts: number;
-  isVerified: boolean;
-}
-
 export interface Supplier {
   id: string;
   name: string;

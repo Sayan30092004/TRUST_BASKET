@@ -264,10 +264,6 @@ export const BusinessModelOverview = () => {
                   <span>{formatCurrency(COST_STRUCTURE.technology.serverAndHosting)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>SMS Services</span>
-                  <span>₹{COST_STRUCTURE.technology.smsServiceCosts}/SMS</span>
-                </div>
-                <div className="flex justify-between">
                   <span>Storage & CDN</span>
                   <span>{formatCurrency(COST_STRUCTURE.technology.storageAndCDN)}</span>
                 </div>
