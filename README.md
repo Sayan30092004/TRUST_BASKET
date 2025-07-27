@@ -2,6 +2,9 @@
 
 India's Most Trusted B2B Marketplace - Connecting suppliers and buyers with verified credentials and real-time communication.
 
+## OTP POPUP:
+  OTP will be shown via Popup
+
 ## 🚀 New Features
 
 ### 🛡️ Trusted Member Verification System
