@@ -5,13 +5,6 @@ India's Most Trusted B2B Marketplace - Connecting suppliers and buyers with veri
 ## OTP POPUP:
   OTP will be shown via Popup
 
-### 📱 Real SMS OTP Verification
-- **Multi-provider SMS service** with fallback support:
-  - Twilio (Primary)
-  - TextLocal (India-specific)
-  - MSG91 (India-specific)
-- **Secure OTP system** with 4-digit codes and 5-minute expiration
-- **Rate limiting** and attempt restrictions for security
 
 ### 📄 Business Document Upload
 - **Supported documents**: Business License, Trade License, GST Certificate, Shop & Establishment License
